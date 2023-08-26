@@ -6,23 +6,36 @@
 // #set page(height: auto)
 // #set heading(numbering: "1.")
 
+#show raw.where(block: false): code => box[
+        #set text(size: 10pt, fill: rgb(250, 179, 135), font: "JetBrains Mono")
+
+        #box(
+            stroke: 1pt + rgb(69, 71, 90),
+            fill: rgb(30, 30, 46),
+            radius: 3pt,
+            outset: (x: 2pt, y: 4pt),
+            inset: (x: 2pt),
+            code
+        )
+]
 
 #show raw.where(lang: "pretty-rs"): code => block[
-    #set text(size: 13pt, fill: rgb(202, 211, 245), font: "JetBrains Mono")
+    #set text(size: 11pt, fill: rgb(202, 211, 245), font: "JetBrains Mono")
 
-    #block(
-        fill: rgb(24, 24, 37), 
+    #block(            
+        stroke: 1pt + rgb(69, 71, 90),
+        fill: rgb(30, 30, 46), 
         radius: 4pt, 
         inset: (x: 5pt, y: 5pt), 
         sourcecode(
-            numbers-style: (i) => text(font: "JetBrainsMono", size: 11pt, fill: rgb(255, 255, 255), i),
+            numbers-style: (i) => text(font: "JetBrains Mono", size: 9pt, fill: rgb(255, 255, 255), i),
             raw(code.text, lang: "rs")
         )
 
     )]
 
 #set raw(
-    theme: "Nord.tmTheme"
+    theme: "Mocha.tmTheme"
 )
 
 #set table(stroke: rgb(137, 180, 250))

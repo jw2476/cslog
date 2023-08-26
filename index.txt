@@ -1,0 +1,1584 @@
+                                Contents
+                                Introduction ..................................................... 1
+                                Analysis ......................................................... 1
+                                Why Computation .................................................. 1
+                                Stakeholders ..................................................... 1
+                                Research ......................................................... 1
+                                Final Fantasy XIV ................................................ 1
+                                Guild Wars 2 ..................................................... 1
+                                Palia ............................................................ 1
+                                Spiritfarer ...................................................... 1
+                                Stardew Valley ................................................... 1
+                                Ashes of Creation ................................................ 1
+                                TODO: Path of Eternity ........................................... 1
+                                TODO: Runescape .................................................. 1
+                                Essential Features ............................................... 1
+                                Limitations ...................................................... 1
+                                Success Criteria ................................................. 1
+                                Requirements ..................................................... 1
+                                Hardware ......................................................... 1
+                                Software ......................................................... 1
+                                Devlogs .......................................................... 1
+                                2023-07-25 - Buffer Race Conditions .............................. 1
+                                The Problem ...................................................... 1
+                                Debugging ........................................................ 1
+                                The Fix .......................................................... 1
+                                2023-08-02 - Client Server Representation ........................ 1
+                                Introduction
+                                MMOs (massively multiplayer online games) are a genre of video games
+                                focusing on connecting thousands of players in one central shared
+                                world where all players can interact and affect each other‚Äôs
+                                experiences. Games from this genre include World of Warcraft,
+                                RuneScape, Final Fantasy XIV, Guild Wars 2 and many more, many of
+                                these games however were released around a decade ago and don‚Äôt take
+                                advantage of modern computing. Furthermore, many of these games
+                                struggle to stay relevant, especially to younger audiences due to
+                                the outdated graphics and systems. My project is a game that hopes
+                                to explore what a possible MMORPG taking advantage of modern
+                                technologies could look like, focusing on immersion, simulation and
+                                player interaction.
+                                Analysis
+                                Why Computation
+                                Computers are well suited to MMO servers as they can simulate a
+                                world with thousands of players in real-time while generating
+                                content for players to explore, a human wouldn‚Äôt be able to keep up
+                                with so many individuals at once. Computers are also well suited for
+                                MMO clients as modern computer graphics can render realistic
+                                environments real-time. In addition computers are good at
+                                communicating with each other quickly and from long distances which
+                                is a needed feature of an MMO client otherwise it cannot talk to the
+                                server, humans are too slow at communication for it to be efficient
+                                on a large scale.
+                                Stakeholders
+                                The main stakeholders for my game would be the players as they are
+                                the target audience. This group can be split into two main
+                                demographics: people who are new to MMOs, and those who are coming
+                                from an existing MMO. To deal with this range of experience levels,
+                                I will need to make sure there is a good set of tutorials to make
+                                sure players new to the genre can understand the game. For gamers
+                                more experienced with MMOs, I will need to look at existing games
+                                and implement similar feature sets that these players will be
+                                expecting, while still adding something new to the game to make it
+                                stand out.
+                                To get a representative sample for each demographic, I will be
+                                talking to people from varying experience ranges with the genre. In
+                                addition I will be sending out testing samples throughout the
+                                development process, asking both groups for feedback.
+                                Research
+                                Final Fantasy XIV
+                                Final Fantasy XIV(FFXIV) is an MMORPG released by Square Enix in
+                                2010. The game revolves around its single-player story which is
+                                mainly comprised of voice-acted cutscenes with various NPC
+                                characters. The story unlocks most of the other mechanics in the
+                                game such as gathering and crafting, dungeons, raids and mounts.
+                                Gathering and crafting in FFXIV is unique thanks to its systems:
+                                players are given a series of abilities that either increase
+                                Progression, Quality, or increase the potential of other abilities.
+                                Once Progression reaches 100% the item is gathered/ crafted, the
+                                Quality value at this time determines the item‚Äôs chance to be High
+                                Quality, meaning the item will be valued higher. This creates a fun
+                                minigame for gathering and crafting which helps to disrupt the
+                                monotony of many video game gathering/ crafting systems, this is
+                                something I am hoping to replicate in my game.
+                                Guild Wars 2
+                                Guild Wars 2 is an MMORPG developed by ArenaNet in 2012, compared to
+                                Final Fantasy XIV the game is much more open ended in its
+                                progression, instead of a central story the player is given a level
+                                which determines the content they can access, XP can be acquired
+                                from many sources such as crafting, questing, PvP and exploration.
+                                Guild Wars 2 has had three expansions added to it: Heart of Thorns,
+                                Path of Fire and End of Dragons, each of these expansions have added
+                                classes, specialisations, new chapters to the Living World and new
+                                zones for players to explore. Heart of Thorns also changed the
+                                progression system from level-based to the Mastery System. The
+                                Mastery System is a huge tree of achievements, tasks and challenges
+                                that each reward the player with items and Mastery Levels which can
+                                be used like skill points in many games. This creates a completely
+                                open ended, horizontal progression system that rewards players for
+                                exploring the game while allowing them to pick and choose what
+                                rewards they want, this is something I am hoping to base my game‚Äôs
+                                progression on.
+                                Palia
+                                Palia is an unreleased MMO being developed by Singularity 6, it
+                                focuses on providing a more casual, laid-back experience that many
+                                other MMORPGs which can fixate on combat and a grand story when many
+                                players just want to craft items for their house, farm crops and
+                                trade with their friends. Not much has been released about Palia
+                                yet, but I would like to try and incorporate this focus on more
+                                casual features into the final game.
+                                Spiritfarer
+                                Spiritfarer is an 2-player indie RPG developed by Thunder Lotus
+                                Games. Its a game about running a boat for spirits to live on while
+                                they prepare to move on into the afterlife, the core gameplay is
+                                about making sure these spirits are happy, well-fed and housed by
+                                gathering and crafting materials to be used for the construction of
+                                the boat. While the story is fantastic, its not something I am
+                                planning to focus on. The part that interests me is the minigames,
+                                there‚Äôs one for foraging, mining, smithing, smelting, cutting down
+                                trees, weaving, cooking and more, each of these minigames are fun
+                                and engaging and your performance in the minigame determines the
+                                yield of the output, if your timing is off when your cutting a tree,
+                                you‚Äôll get less wood, if you time a pickaxe swing badly, you‚Äôll get
+                                less ore, etc. Spiritfarer is going to be main inspiration for
+                                minigames for otherwise tedious mechanics.
+                                Stardew Valley
+                                Stardew Valley made by ConcernedApe presents itself as a basic indie
+                                farming game, and while the farming part of the game is great, the
+                                part where it is really fantastic is making the player feel like
+                                they are part of the game world. The village throws festivals, has
+                                birthday parties for the NPCs and as the player becomes friendlier
+                                with the villagers they start getting invited to these events, they
+                                get integrated into the village and made to feel at home. This
+                                personal connection with the player is what many feel Stardew Valley
+                                is all about, and something I would like to try and emulate in the
+                                final game.
+                                Ashes of Creation
+                                Ashes of Creation is an unreleased MMORPG being developed by
+                                Intrepid Studios. It is focusing on making a dynamic world where
+                                player actions result in huge changes to the game‚Äôs world. The world
+                                is split up into areas called nodes, eazch node has a development
+                                level which determines the type and level of buildings players are
+                                allowed to build in a city. Nodes also have abundances of certain
+                                resources and scarcity of others, for example one node may have a
+                                surplus of food but lack ore, so must trade with another nearby node
+                                for those resources to keep its economy alive. Events like this are
+                                called emergent gameplay as they emerged from other mechanics the
+                                game developers designed, rather than being designed directly. This
+                                emergent gameplay is something I am looking to achieve in the final
+                                game.
+                                TODO: Path of Eternity
+                                TODO: Runescape
+                                Essential Features
+                                Limitations
+                                Due to limitations in time and budget, the game will not target
+                                smartphones or consoles, nor macOS as I don‚Äôt own a Mac, however
+                                both Windows and Linux should be supported. In addition, I‚Äôm not
+                                great at art, so I will use a simplistic, low-poly style so the
+                                assets are simpler to create, I‚Äôm also hoping to use music licenced
+                                under Creative Commons so I can avoid making my own, I‚Äôm more
+                                interesting in the game design and programming.
+                                Also due to the goal of making the game run on as many devices as
+                                possible, I‚Äôm not going to be able to expect cutting-edge hardware,
+                                the game will need to be performant and optimised for older
+                                machines, my test for this will be my 6 year old laptop.
+                                Finally I don‚Äôt have a large budget for servers, so the server code
+                                needs to be well optimised and efficient so it can run on a machine
+                                like a Raspberry Pi.
+                                Success Criteria
+                                To succeed my game will need to:
+                                ‚Ä¢ Run on as many devices as possible
+                                ‚Ä¢ Have low-latency, reliable networking
+                                ‚Ä¢ Have intuitive, fun mechanics and UI
+                                ‚Ä¢ Value the players time
+                                ‚Ä¢ Have many mechanics to allow players to play the parts they enjoy
+                                     while interacting with the rest of the world resulting in emergent
+                                     gameplay
+                                ‚Ä¢ Have an immersive world-wide story delivered through events and
+                                     cutscenes
+                                Many of these criteria are very subjective, so there will be phases
+                                of playtesting with stakeholders during development where the
+                                stakeholders get to play the game for a while and will evaluate it
+                                against this criteria. I will also be evaluating against this
+                                criteria when designing mechanics and systems.
+                                Requirements
+                                Hardware
+                                ‚Ä¢ A computer with standard peripherals like keyboard, mouse/
+                                     trackpad, etc
+                                ‚Ä¢ A GPU capable of running Vulkan, this is mainly driver dependant
+                                     unless the GPU is 10+ years old
+                                ‚Ä¢ More concrete requirements will be decided when the game is closer
+                                     to completion
+                                Software
+                                Because the game needs to be able to run on as many devices as
+                                possible, I‚Äôve tried to keep the requirements as basic as possible:
+                                ‚Ä¢ Up-to-date graphics driver will be needed as I‚Äôll be using modern
+                                     graphics APIs like Vulkan
+                                ‚Ä¢ Windows 10 or Linux
+                                Devlogs
+                                2023-07-25 - Buffer Race Conditions
+                                The Problem
+                                Occasionally, especially on my desktop, I‚Äôd notice missing chunks of
+                                vertex data. Upon investigation with RenderDoc I saw that the first
+                                64 bytes of the vertex buffer was being set to a strange constant
+                                value.
+                                Debugging
+                                Using RenderDoc I traced back into the memory arena that buffer
+                                allocations were coming from, the same memory offset was being
+                                assigned to two buffers in the same frame.
+                                Now this in theory wouldn‚Äôt be an issue since the first buffer was
+                                being used in the render pass, and the second in the UI pass,
+                                however the GPU wasn‚Äôt waiting properly when I was allocating and
+                                writing memory, even when I told the device to wait till idle on
+                                every write (which incurred a heavy performance penalty). The issue
+                                was due to the fact I was deallocating memory according to Rust
+                                lifetimes, i.e. when a resource goes out of scope rather than GPU
+                                lifetimes which were a lot longer, hence the race condition.
+                                The Fix
+                                The solution was to record frees into a ‚Äúto free‚Äù buffer and flush
+                                that buffer when the program could guarantee the GPU wouldn‚Äôt be
+                                using any resources and with this the vertex buffer corruption
+                                seemed to disappear. It‚Äôs not the best solution and it locks me out
+                                of frames-in-flight so I may need to revisit it, however that won‚Äôt
+                                be too hard since part of my debugging resulted in me writing a
+                                custom allocator and dropping and gpu_allocator requirement, so it
+                                will be easier to extend in future.
+                                Here‚Äôs an example of batching frees:
+                                2023-08-02 - Client Server Representation
+                                With gathering and a basic inventory implemented on the client-side,
+                                I ran a brief playtest sending an executable and IP address to a few
+                                friends who are interested in the project. The resounding feedback
+                                was that were was no persistence, if they logged off and logged back
+                                in, their items would have been lost, this is because at the moment
+                                the server has no concept of an inventory or gathering, I was
+                                planning to move on to crafting and revisit this later but with the
+                                feedback recieved I decided to prioritise this issue.
+                                The first issue was going to be where to store the game data, below
+                                is a table evaluating the
+                                     Option                                                          Advantages                                                           Disadvantages
+                                                                                                     ‚Ä¢ Minimises server                                                   ‚Ä¢ Easy to tamper
+                                                                                                           load                                                                with data
+                                     Client-side storage
+                                                                                                     ‚Ä¢ No need to sync                                                    ‚Ä¢ Client is not
+                                                                                                           data with server                                                    always online
+                                                                                                     ‚Ä¢ Very difficult to
+                                                                                                                                                                          ‚Ä¢ Increased server
+                                                                                                           tamper with data
+                                                                                                                                                                               load
+                                                                                                     ‚Ä¢ Data is all in one
+                                     Server-side storage                                                                                                                  ‚Ä¢ Clients need to
+                                                                                                           place
+                                                                                                                                                                               tell server about
+                                                                                                     ‚Ä¢ Data is always
+                                                                                                                                                                               all data changes
+                                                                                                           accessible
+                                Since this system would be used to store inventory data it must be
+                                tamper-proof, otherwise it would be too easy for players to cheat
+                                items into the game, and any sort of economy would be impossible.
+                                Because of this I decided the server would have to store the data in
+                                some sort of central database. The server load issue this creates
+                                can be minimised using client prediction which I‚Äôll get to later in
+                                this devlog.
+                                The choice to store data on the server then presents another issue,
+                                the same objects will often be represented differently on the client
+                                and server, for example here the client and server Player struct:
+                                    1
+                                           struct Player {
+                                    2
+                                               player: RenderObject,
+                                    3
+                                               jump_t: f32,
+                                    4
+                                               light: Light
+                                    5
+                                           }
+                                    1
+                                           struct Player {
+                                    2
+                                               position: Vec3,
+                                    3
+                                               username: String,
+                                    4
+                                               inventory: Inventory,
+                                    5
+                                           }
+                                The data is completely different, the server Player contains a
+                                username and inventory, whereas on the client these are separate
+                                systems. This is an example of a struct that should be kept separate
+                                between server and client, however there are structs with more in
+                                common between server and client such as the Item enum which contains
+                                a list of all items in the game, at this point I moved these more
+                                common data structures into a common crate which can be used by both
+                                the client and server crates.
+                                So far the network protocol had been manually encoding data into
+                                bytes which lead to a lot of bugs and errors along the way. Luckily
+                                someone has made an amazing crate called serde which allows automatic
+                                encoding and decoding of data structures. In addition to serde, I
+                                needed a crate that encodes data into a tightly packet binary
+                                stream, I took a while to look through the option and it seemed like
+                                postcard was the best option. Refactoring to use serde and postcard took
+                                the network code from
+                                    1
+                                             #[derive(FromPrimitive, ToPrimitive)]
+                                    2
+                                             pub enum ServerboundOpcode {
+                                    3
+                                                 Login,
+                                    4
+                                                 Move,
+                                    5
+                                                 Heartbeat,
+                                    6
+                                                 Disconnect,
+                                    7
+                                             }
+                                    8
+                                    9
+                                             pub struct ServerboundPacket {
+                                    10
+                                                 pub opcode: ServerboundOpcode,
+                                    11
+                                                 pub payload: Vec<u8>,
+                                    12
+                                             }
+                                    13
+                                    14
+                                             #[derive(FromPrimitive, ToPrimitive)]
+                                    15
+                                             pub enum ClientboundOpcode {
+                                    16
+                                                 SpawnPlayer,
+                                    17
+                                                 Move,
+                                    18
+                                                 DespawnPlayer,
+                                    19
+                                                 NotifyDisconnection,
+                                    20
+                                                 Kick,
+                                    21
+                                             }
+                                    22
+                                    23
+                                             pub struct ClientboundPacket {
+                                    24
+                                                 pub opcode: ClientboundOpcode,
+                                    25
+                                                 pub payload: Vec<u8>,
+                                    26
+                                             }
+                                    27
+                                    28
+                                             impl ClientboundPacket {
+                                    29
+                                                 pub fn to_bytes(&self) -> Vec<u8> {
+                                    30
+                                                     let mut data = Vec::new();
+                                    31
+                                                     data.extend(&self.opcode.to_u32().unwrap().to_be_bytes());
+                                    32
+                                                     data.extend(&self.payload.clone());
+                                    33
+                                                     let mut packet = data.len().to_be_bytes().to_vec();
+                                    34
+                                                     packet.append(&mut data);
+                                    35
+                                                     packet
+                                    36
+                                                 }
+                                    37
+                                             }
+                                    38
+                                    39
+                                             impl ServerboundPacket {
+                                    40
+                                                 pub fn to_bytes(&self) -> Vec<u8> {
+                                    41
+                                                     let mut data = Vec::new();
+                                    42
+                                                     data.extend(&self.opcode.to_u32().unwrap().to_be_bytes());
+                                    43
+                                                     data.extend(&self.payload.clone());
+                                    44
+                                                     let mut packet = data.len().to_be_bytes().to_vec();
+                                    45
+                                                     packet.append(&mut data);
+                                    46
+                                                     packet
+                                    47
+                                                 }
+                                    48
+                                             }
+                                to
+                                    1
+                                             pub mod server {
+                                    2
+                                                 use serde::{Deserialize, Serialize};
+                                    3
+                                    4
+                                                 #[derive(Serialize, Deserialize, Debug, Clone)]
+                                    5
+                                                 pub struct Login {
+                                    6
+                                                     pub username: String,
+                                    7
+                                                 }
+                                    8
+                                    9
+                                                 #[derive(Serialize, Deserialize, Debug, Clone)]
+                                    10
+                                                 pub struct Move {
+                                    11
+                                                     pub position: glam::Vec3,
+                                    12
+                                                 }
+                                    13
+                                    14
+                                                 #[derive(Serialize, Deserialize, Debug, Clone)]
+                                    15
+                                                 pub enum Packet {
+                                    16
+                                                     Login(Login),
+                                    17
+                                                     Move(Move),
+                                    18
+                                                     Heartbeat,
+                                    19
+                                                     Disconnect,
+                                    20
+                                                 }
+                                    21
+                                             }
+                                    22
+                                    23
+                                             pub mod client {
+                                    24
+                                                 use serde::{Deserialize, Serialize};
+                                    25
+                                    26
+                                                 #[derive(Serialize, Deserialize, Debug, Clone)]
+                                    27
+                                                 pub struct SpawnPlayer {
+                                    28
+                                                     pub username: String,
+                                    29
+                                                     pub position: glam::Vec3,
+                                    30
+                                                 }
+                                    31
+                                    32
+                                                 #[derive(Serialize, Deserialize, Debug, Clone)]
+                                    33
+                                                 pub struct DespawnPlayer {
+                                    34
+                                                     pub username: String,
+                                    35
+                                                 }
+                                    36
+                                    37
+                                                 #[derive(Serialize, Deserialize, Debug, Clone)]
+                                    38
+                                                 pub struct Move {
+                                    39
+                                                     pub username: String,
+                                    40
+                                                     pub position: glam::Vec3,
+                                    41
+                                                 }
+                                    42
+                                    43
+                                                 #[derive(Serialize, Deserialize, Debug, Clone)]
+                                    44
+                                                 pub struct NotifyDisconnection {
+                                    45
+                                                     pub reason: String,
+                                    46
+                                                 }
+                                    47
+                                    48
+                                                 #[derive(Serialize, Deserialize, Debug, Clone)]
+                                    49
+                                                 pub enum Packet {
+                                    50
+                                                     SpawnPlayer(SpawnPlayer),
+                                    51
+                                                     DespawnPlayer(DespawnPlayer),
+                                    52
+                                                     Move(Move),
+                                    53
+                                                     NotifyDisconnection(NotifyDisconnection),
+                                    54
+                                                 }
+                                    55
+                                             }
+                                Here‚Äôs an example of where it simplified the most code, this is
+                                server side decoding before and after this change:
+                                    1
+                                             let packet_size =
+                                    2
+                                                 if let Some(array) = buf.get(0..8).and_then(|bytes| bytes.try_into().ok())
+                                             {
+                                    3
+                                                     u64::from_be_bytes(array)
+                                    4
+                                                 } else {
+                                    5
+                                                     warn!("Failed to read packet due to underflow");
+                                    6
+                                                     continue;
+                                    7
+                                                 };
+                                    8
+                                    9
+                                             let Some(packet) = buf.get(8..(packet_size as usize + 8)) else {
+                                    10
+                                                 warn!("Failed to read packet due to underflow");
+                                    11
+                                                 continue
+                                    12
+                                             };
+                                    13
+                                    14
+                                             let opcode =
+                                    15
+                                                 if let Some(array) = packet.get(0..4).and_then(|bytes|
+                                             bytes.try_into().ok()) {
+                                    16
+                                                     u32::from_be_bytes(array)
+                                    17
+                                                 } else {
+                                    18
+                                                     warn!("Packet of size {} is too short", packet.len());
+                                    19
+                                                     continue;
+                                    20
+                                                 };
+                                    21
+                                    22
+                                             let Some(opcode) = ServerboundOpcode::from_u32(opcode) else {
+                                    23
+                                                 warn!("Invalid opcode: {}", opcode);
+                                    24
+                                                 continue
+                                    25
+                                             };
+                                    26
+                                    27
+                                             let Some(payload) = packet.get(4..).map(<[u8]>::to_vec) else {
+                                    28
+                                                warn!("Failed to read packet body");
+                                    29
+                                                continue
+                                    30
+                                             };
+                                    31
+                                    32
+                                             let packet = ServerboundPacket { opcode, payload };
+                                to just:
+                                    1
+                                             let packet = match postcard::from_bytes(&buf) {
+                                    2
+                                                 Ok(packet) => packet,
+                                    3
+                                                 Err(e) => {
+                                    4
+                                                     warn!("Failed to decode packet due to {}", e);
+                                    5
+                                                     continue;
+                                    6
+                                                 }
+                                    7
+                                             };
+                                    8
+                                    9
+                                             if let Err(e) = handle_packet(&mut server, &packet, addr) {
+                                    10
+                                                 warn!("Handling packet failed with {e}");
+                                    11
+                                                 continue;
+                                    12
+                                             }
+                                It also made using the packet payloads a lot easier since the
+                                handlers don‚Äôt have to worry about decoding the binary, for example:
+                                    1
+                                             let username = match String::from_utf8(packet.payload.clone()) {
+                                    2
+                                                 Ok(str) => str.trim().to_owned(),
+                                    3
+                                                 Err(e) => {
+                                    4
+                                                     warn!("Failed to parse username: {}", e);
+                                    5
+                                                     if let Err(e) = disconnect(server, addr, Some("Invalid
+                                             username".to_owned())) {
+                                    6
+                                                         warn!("Failed to disconnect client due to {}", e);
+                                    7
+                                                     }
+                                    8
+                                                     return;
+                                    9
+                                                 }
+                                    10
+                                             };
+                                    11
+                                             let client = Client {
+                                    12
+                                                 username,
+                                    13
+                                                 player_translation: Vec3::new(0.0, 0.0, 0.0),
+                                    14
+                                                 last_heartbeat: Instant::now(),
+                                    15
+                                             };
+                                became just:
+                                    1
+                                           let client = Client {
+                                    2
+                                               username: packet.username.clone(),
+                                    3
+                                               player_translation: Vec3::new(0.0, 0.0, 0.0),
+                                    4
+                                               last_heartbeat: Instant::now(),
+                                    5
+                                           };
+                                While testing all server functionality I found the player would
+                                jitter when moving and peers positions would not update, looking at
+                                client logs when client A would move, client A would recieve a
+                                packet updating its position, client B wouldn‚Äôt. Must be a server
+                                bug, issue was when sending the movement update packets, taking a
+                                look at the server-side handle_move function:
+                                    1
+                                             fn handle_move(server: &mut Server, packet: &net::server::Move, addr:
+                                             SocketAddr) {
+                                    2
+                                                 // Find client, early returning if not found
+                                    3
+                                                 let Some(client) = server
+                                    4
+                                                     .connections
+                                    5
+                                                     .get_mut(&addr) else {
+                                    6
+                                                         warn!("Cannot find client for addr {}", addr);
+                                    7
+                                                         return;
+                                    8
+                                                     };
+                                    9
+                                    10
+                                                 client.player_translation = packet.position;
+                                    11
+                                    12
+                                                 info!(
+                                    13
+                                                     "Updated position for {} to {:?}",
+                                    14
+                                                     client.username, client.player_translation
+                                    15
+                                                 );
+                                    16
+                                    17
+                                                 // Have to refetch to drop the mutable reference
+                                    18
+                                                 let Some(client) = server
+                                    19
+                                                     .connections
+                                    20
+                                                     .get(&addr) else {
+                                    21
+                                                         warn!("Cannot find client for addr {}", addr);
+                                    22
+                                                         return;
+                                    23
+                                                     };
+                                    24
+                                    25
+                                                 for peer_addr in server.connections.keys() {
+                                    26
+                                                     if *peer_addr == addr { // Don't want to send to itself, will cause
+                                             jitter
+                                    27
+                                                         continue;
+                                    28
+                                                     }
+                                    29
+                                    30
+                                                     // Prepare packet
+                                    31
+                                                     let packet = net::client::Packet::Move(net::client::Move {
+                                    32
+                                                         username: client.username.clone(),
+                                    33
+                                                         position: client.player_translation
+                                    34
+                                                     });
+                                    35
+                                    36
+                                                     if let Err(e) = server.send(addr, &packet) {
+                                    37
+                                                         warn!(
+                                    38
+                                                             "Failed to notify {} of {} moving due to {}",
+                                    39
+                                                             peer_addr, client.username, e
+                                    40
+                                                         );
+                                    41
+                                                         continue;
+                                    42
+                                                     }
+                                    43
+                                                 }
+                                    44
+                                             }
+                                The issue was with the destination address of the packet, I was
+                                sending them to addr which was the address of the client that sent
+                                the packet. I should have been sending them to the peer‚Äôs address,
+                                stored in peer_addr, here are the changes I made to fix it:
+                                    1
+                                           if let Err(e) = server.send(addr, &packet) {
+                                    2
+                                               warn!(
+                                    3
+                                                   "Failed to notify {} of {} moving due to {}",
+                                    4
+                                                   peer_addr, client.username, e
+                                    5
+                                               );
+                                    6
+                                               continue;
+                                    7
+                                           }
+                                needed to be:
+                                    1
+                                           if let Err(e) = server.send(*peer_addr, &packet) {
+                                    2
+                                               warn!(
+                                    3
+                                                   "Failed to notify {} of {} moving due to {}",
+                                    4
+                                                   peer_addr, client.username, e
+                                    5
+                                               );
+                                    6
+                                               continue;
+                                    7
+                                           }
+                                The dereference was needed as the peer_addr was borrowed from the
+                                hashmap of clients.
+                                After testing again I found another issue, the first client would
+                                connect fine, second client would connect and the first would crash
+                                due to ‚ÄòUnknown peer‚Äô, this meant there was an issue with the
+                                handle_login function and it wasn‚Äôt notifying peers about a new
+                                connection.
+                                    1
+                                             fn handle_login(server: &mut Server, packet: &net::server::Login, addr:
+                                             SocketAddr) {
+                                    2
+                                                 let client = Client {
+                                    3
+                                                     username: packet.username.clone(),
+                                    4
+                                                     player_translation: Vec3::new(0.0, 0.0, 0.0),
+                                    5
+                                                     last_heartbeat: Instant::now(),
+                                    6
+                                                 };
+                                    7
+                                    8
+                                                 // Notify peers about new client
+                                    9
+                                                 for peer_addr in server.connections.keys() {
+                                    10
+                                                     let packet = net::client::Packet::SpawnPlayer(net::client::SpawnPlayer
+                                             {
+                                    11
+                                                         username: client.username.clone(),
+                                    12
+                                                         position: client.player_translation,
+                                    13
+                                                     });
+                                    14
+                                                     if let Err(e) = server.send(addr, &packet) {
+                                    15
+                                                         warn!("Failed to notify {} of new player due to {}", peer_addr,
+                                             e);
+                                    16
+                                                     }
+                                    17
+                                                 }
+                                    18
+                                    19
+                                                 // Notify client about existing peers
+                                    20
+                                                 for (peer_addr, peer_client) in &server.connections {
+                                    21
+                                                     let packet = net::client::Packet::SpawnPlayer(net::client::SpawnPlayer
+                                             {
+                                    22
+                                                         username: peer_client.username.clone(),
+                                    23
+                                                         position: peer_client.player_translation,
+                                    24
+                                                     });
+                                    25
+                                                     if let Err(e) = server.send(addr, &packet) {
+                                    26
+                                                         warn!(
+                                    27
+                                                             "Failed to notify new player {} of player {} due to {}",
+                                    28
+                                                             addr, peer_addr, e
+                                    29
+                                                         );
+                                    30
+                                                     }
+                                    31
+                                                 }
+                                    32
+                                    33
+                                                 info!("Added {} to connection list", client.username);
+                                    34
+                                                 server.connections.insert(addr, client);
+                                    35
+                                             }
+                                Taking a look it was the same bug as before, now on line 14, the
+                                first client was complaining about unknown peers because it wasn‚Äôt
+                                being notified, the newly connected client was as addr was being used
+                                instead of peer_addr. This can be fixed with a quick change:
+                                    1
+                                             // Notify peers about new client
+                                    2
+                                             for peer_addr in server.connections.keys() {
+                                    3
+                                                 let packet = net::client::Packet::SpawnPlayer(net::client::SpawnPlayer {
+                                    4
+                                                     username: client.username.clone(),
+                                    5
+                                                     position: client.player_translation,
+                                    6
+                                                 });
+                                    7
+                                                 if let Err(e) = server.send(addr, &packet) {
+                                    8
+                                                     warn!("Failed to notify {} of new player due to {}", peer_addr, e);
+                                    9
+                                                 }
+                                    10
+                                             }
+                                should have been:
+                                    1
+                                             // Notify peers about new client
+                                    2
+                                             for peer_addr in server.connections.keys() {
+                                    3
+                                                 let packet = net::client::Packet::SpawnPlayer(net::client::SpawnPlayer {
+                                    4
+                                                     username: client.username.clone(),
+                                    5
+                                                     position: client.player_translation,
+                                    6
+                                                 });
+                                    7
+                                                 if let Err(e) = server.send(*peer_addr, &packet) {
+                                    8
+                                                     warn!("Failed to notify {} of new player due to {}", peer_addr, e);
+                                    9
+                                                 }
+                                    10
+                                             }
+                                And with that everything was working again, now the server and
+                                client both had access to the item data and networking was
+                                refactored I finally moved onto inventory syncing. I chose the
+                                simplest approach, the client notifes the server about a new item,
+                                this approach has a few issues, mainly that it would be very easy to
+                                spawn items in since there can be no validation. Eventually I‚Äôd want
+                                to make the client tell the server about an action such as gathering
+                                or crafting, and then the server validates the action and calculates
+                                the resulting effects such as modifying the player‚Äôs inventory, and
+                                then notifies the client of the effects, however since the server
+                                currently has no knowledge of the game world, and I said before
+                                there‚Äôs little point until I start working on a static/procedurally
+                                generated world, it can‚Äôt validate these actions so this simple
+                                approach is all that‚Äôs possible.
+                                Firstly I designed the packet ModifyInventory, it needed to both add
+                                and remove item stacks (I chose item stacks over indiviual items to
+                                reduce the number of packets being sent to the server), the struct
+                                for the packet looked like this, I could simplify adding and
+                                removing stacks by just making the server respond by setting the
+                                stack quantity to the amount in the packet. So if the client sent a
+                                packet with a stack containing (Wood, 4), the server would set that
+                                player‚Äôs quantity of wood to 4. If its set to 0, its treated as
+                                deleting the stack.
+                                    1
+                                           #[derive(Serialize, Deserialize, Debug, Clone)]
+                                    2
+                                           pub struct ModifyInventory {
+                                    3
+                                               stack: ItemStack
+                                    4
+                                           }
+                                Now I had to hook into Inventory struct‚Äôs add method, and whenever it
+                                is called dispatch a ModifyInventory packet to the server. With the
+                                current system with Inventory in the common crate, this was very
+                                difficult as whatever changes were made would affect both the server
+                                and client, I needed a way of specifying behaviour specific to the
+                                client or the server, so far I had only done this with data. Here
+                                are a couple solutions I came up with and evalutated:
+                                     Option                                                             Advantages                                                         Disadvantages
+                                                                                                                                                                           ‚Ä¢ Adds a layer of
+                                                                                                        ‚Ä¢ Function                                                               indirection when
+                                                                                                             signatures remain                                                   you call a
+                                                                                                             the same as the                                                     function, unknown
+                                     Inject middleware                                                       closures will                                                       side-effects,
+                                     closures that are                                                       capture any side                                                    could lead to
+                                     called when the                                                         specific state                                                      accidental
+                                     method is called                                                   ‚Ä¢ Adding middleware                                                      deadlocks or
+                                                                                                             capabilities could                                                  performance issues
+                                                                                                             be automated with                                             ‚Ä¢ Makes constructors
+                                                                                                             a macro                                                             a lot more
+                                                                                                                                                                                 complicated
+                                                                                                                                                                           ‚Ä¢ Data and code
+                                                                                                                                                                                 could be
+                                     Move the struct
+                                                                                                                                                                                 duplicated,
+                                     from the common                                                    ‚Ä¢ Easy to do
+                                                                                                                                                                                 possibly causing a
+                                     crate into seperate                                                ‚Ä¢ No complex
+                                                                                                                                                                                 data desync
+                                     server and client                                                       constructors
+                                                                                                                                                                           ‚Ä¢ Common crate has
+                                     structs
+                                                                                                                                                                                 no knowledge of
+                                                                                                                                                                                 this system
+                                                                                                                                                                           ‚Ä¢ Data and code
+                                                                                                                                                                                 could be
+                                                                                                        ‚Ä¢ Useful if the
+                                     Swap the struct for                                                                                                                         duplicated,
+                                                                                                             common crate needs
+                                     a trait which then                                                                                                                          possibly causing a
+                                                                                                             to use the system
+                                     the side specific                                                                                                                           data desync,
+                                                                                                             as it can be
+                                     structs implement                                                                                                                           however this can
+                                                                                                             passed as a &dyn
+                                     aka dependency                                                                                                                              be reduced using
+                                                                                                             Trait
+                                     injection                                                                                                                                   default
+                                                                                                        ‚Ä¢ Easy to do
+                                                                                                                                                                                 implementations
+                                                                                                                                                                           ‚Ä¢ Boilerplate
+                                                                                                        ‚Ä¢ Easy to do
+                                                                                                                                                                           ‚Ä¢ Code has to be
+                                                                                                        ‚Ä¢ Useful if the
+                                                                                                                                                                                 written in the
+                                     Use features to
+                                                                                                             common crate needs
+                                                                                                                                                                                 common crate, so
+                                     disable certain
+                                                                                                             to use the system
+                                                                                                                                                                                 it can‚Äôt use any
+                                     functions
+                                                                                                             as it can be
+                                                                                                                                                                                 client/server
+                                                                                                             passed as a &dyn
+                                                                                                                                                                                 specific bits
+                                                                                                             Trait
+                                                                                                                                                                           ‚Ä¢ Common crate can‚Äôt
+                                     Wrap the struct                                                                                                                             use the
+                                                                                                        ‚Ä¢ Allows for the use
+                                     with a new struct                                                                                                                           specialised
+                                                                                                             of code in side
+                                     in the side                                                                                                                                 methods
+                                                                                                             specific crates
+                                     specific crates                                                                                                                       ‚Ä¢ Results in a bit
+                                                                                                                                                                                 of boilerplate
+                                                                                                        ‚Ä¢ Observers can be
+                                                                                                             registered from
+                                                                                                                                                                           ‚Ä¢ Can add a little
+                                     Observables                                                             either side to
+                                                                                                                                                                                 boilerplate
+                                                                                                             watch the changes
+                                                                                                             and respond
+                                I don‚Äôt think there‚Äôs a one size fits all solution to this senario,
+                                but in the case of the Inventory struct I decided to keep the
+                                Inventory struct split and have different structs and code on the
+                                client and server sides, I was leaning towards observables but
+                                working out whats changed can be very complicated and easy to
+                                introduce bugs. The client side inventory needed to store a
+                                reference to the socket so it could send packets, so the struct
+                                looked like:
+                                    1
+                                           use common::ItemStack;
+                                    2
+                                    3
+                                           struct Inventory {
+                                    4
+                                               inventory: Vec<ItemStack>,
+                                    5
+                                               socket: Arc<Socket>
+                                    6
+                                           }
+                                and on the server to socket wasn‚Äôt needed so the struct looked like:
+                                    1
+                                           use common::ItemStack;
+                                    2
+                                    3
+                                           struct Inventory {
+                                    4
+                                               inventory: Vec<ItemStack>
+                                    5
+                                           }
+                                I may choose to replace the Vec<ItemStack> with some sort of indexed
+                                map in future to bring lookups from O(n) to O(1), but for now the
+                                vector is fine. With that done, I moved onto implementation, the
+                                server implementation was just the same as the existing client
+                                implementation so I copied that over before modifying the client
+                                implementation to include sockets.
+                                The only changes needed for the client was taking the socket
+                                reference in the constructor and sending the packet when either add
+                                or set were called. I chose to add a new private method called update
+                                that sent the ModifyInventory packet to the server.
+                                    1
+                                             impl Inventory {
+                                    2
+                                                 pub fn new(socket: Arc<Socket>) -> Self {
+                                    3
+                                                     Self {
+                                    4
+                                                         inventory: Vec::new(),
+                                    5
+                                                         socket
+                                    6
+                                                     }
+                                    7
+                                                 }
+                                    8
+                                    9
+                                                 fn update(&self, item: Item) {
+                                    10
+                                                     let Some(stack) = self.inventory.iter().find(|s| s.item == item) else
+                                             {
+                                    11
+                                                         warn!("Tried to update stack {:?} that doesn't exist", item);
+                                    12
+                                                         return;
+                                    13
+                                                     };
+                                    14
+                                    15
+                                    16
+                                                     let packet =
+                                             net::server::Packet::ModifyInventory(net::server::ModifyInventory {
+                                    17
+                                                         stack: stack.clone()
+                                    18
+                                                     });
+                                    19
+                                                     if let Err(e) = self.socket.send(&packet) {
+                                    20
+                                                         warn!("Failed to update stack {:?} due to {}", item, e);
+                                    21
+                                                         return;
+                                    22
+                                                     }
+                                    23
+                                                 }
+                                    24
+                                    25
+                                                 pub fn add(&mut self, stack: ItemStack) {
+                                    26
+                                                     if let Some(existing) = self.inventory.iter_mut().find(|s| s.item ==
+                                             stack.item) {
+                                    27
+                                                         existing.amount += stack.amount;
+                                    28
+                                                     } else {
+                                    29
+                                                         self.inventory.push(stack);
+                                    30
+                                                     }
+                                    31
+                                    32
+                                                     self.update(stack.item);
+                                    33
+                                                 }
+                                    34
+                                    35
+                                                 pub fn set(&mut self, stack: ItemStack) {
+                                    36
+                                                     if let Some(existing) = self.inventory.iter_mut().find(|s| s.item ==
+                                             stack.item) {
+                                    37
+                                                         existing.amount = stack.amount;
+                                    38
+                                                     } else {
+                                    39
+                                                         self.inventory.push(stack);
+                                    40
+                                                     }
+                                    41
+                                    42
+                                                     self.update(stack.item);
+                                    43
+                                                 }
+                                    44
+                                    45
+                                                 pub fn get_items(&self) -> &[ItemStack] {
+                                    46
+                                                     &self.inventory
+                                    47
+                                                 }
+                                    48
+                                             }
+                                I handled the socket errors in the update function which is bad
+                                practice but I didn‚Äôt want to be bubbling up Results everywhere,
+                                eventually there may be a wrapper around the socket that attempts to
+                                retry sending packets to recover from temporary losses of connection
+                                but that‚Äôs a problem to solve in the future
+                                With ModifyInventory packets being sent to the server, I now to
+                                handle them by updating the server-side inventory for the player.
+                                Firstly I updated the Connection struct to include an inventory:
+                                    1
+                                           struct Connection {
+                                    2
+                                               player_translation: Vec3,
+                                    3
+                                               username: String,
+                                    4
+                                               last_heartbeat: Instant,
+                                    5
+                                               inventory: Inventory // New
+                                    6
+                                           }
+                                Next I needed the logic to update the item stacks on a ModifyInventory
+                                packet, I put this code in a new function called handle_modify_inventory:
+                                    1
+                                             fn handle_modify_inventory(server: &mut Server, packet:
+                                             &net::server::ModifyInventory, addr: SocketAddr) {
+                                    2
+                                                 // Get connection
+                                    3
+                                                 let Some(connection) = server
+                                    4
+                                                     .connections
+                                    5
+                                                     .get_mut(&addr) else {
+                                    6
+                                                         warn!("Cannot find connection for addr {}", addr);
+                                    7
+                                                         return;
+                                    8
+                                                     };
+                                    9
+                                    10
+                                                 // Update inventory
+                                    11
+                                                 connection.inventory.set(packet.stack);
+                                    12
+                                             }
+                                Now the server was keeping track of the players‚Äô inventories,
+                                however when the connection was lost, the Connection structs were
+                                dropped out of the HashMap, loosing the inventories in the process.
+                                I needed to store player data separately from connection info so the
+                                data can be reused by multiple connections. I came up with a couple
+                                ways of doing this:
+                                     Option                                                             Advantages                                                         Disadvantages
+                                     Store a list of
+                                     players and a list
+                                     of connections,
+                                                                                                                                                                           ‚Ä¢ Lots of Options to
+                                     with each
+                                                                                                                                                                                 handle due to
+                                     connection storing                                                 ‚Ä¢ Simple to store
+                                                                                                                                                                                 searching for
+                                     the player‚Äôs
+                                                                                                                                                                                 players
+                                     username so the
+                                     player can be
+                                     searched for
+                                                                                                                                                                           ‚Ä¢ Raw references
+                                     Store a list of
+                                                                                                                                                                                 result in lifetime
+                                     players and a list
+                                                                                                                                                                                 nightmare
+                                     of connections,
+                                                                                                                                                                           ‚Ä¢ Shared ownership
+                                     with each                                                          ‚Ä¢ Easy to index
+                                                                                                                                                                                 i.e. Mutex, RwLock
+                                     connection having a
+                                                                                                                                                                                 needs locking,
+                                     reference to a
+                                                                                                                                                                                 lots of Results to
+                                     player
+                                                                                                                                                                                 handle
+                                     Store a list of
+                                     offline players,
+                                     and a list of
+                                                                                                                                                                           ‚Ä¢ Puts a bit more
+                                     online connection,
+                                                                                                                                                                                 logic into
+                                     on login the player                                                ‚Ä¢ No references, so
+                                                                                                                                                                                 connection and
+                                     is moved out of the                                                     no Results
+                                                                                                                                                                                 disconnection,
+                                     list and into a                                                    ‚Ä¢ No searches, so no
+                                                                                                                                                                                 need to be careful
+                                     connection object                                                       Options
+                                                                                                                                                                                 not to drop player
+                                     which is put into
+                                                                                                                                                                                 info
+                                     the online
+                                     connections list,
+                                     undo on disconnect
+                                I decided to go with storing a list of offline players and a list of
+                                online connections because it didn‚Äôt need any error handling so the
+                                code would be simpler. At this point I decided to implement that
+                                indexed map I talked about earlier, its a wrapper around a HashMap
+                                where the keys can be derived from the value, for players that‚Äôs
+                                their username (I‚Äôll probably replace this with UUIDs at some
+                                point), for connections that‚Äôs their socket address, here‚Äôs the code
+                                for the IndexedMap and the Unique trait which I use to implement how
+                                to go from the value to the key:
+                                    1
+                                             trait Unique {
+                                    2
+                                                 type Key: Eq + PartialEq + Hash;
+                                    3
+                                    4
+                                                 fn get_unique_key(&self) -> Self::Key;
+                                    5
+                                             }
+                                    6
+                                    7
+                                             struct IndexedMap<T>
+                                    8
+                                             where
+                                    9
+                                                 T: Unique,
+                                    10
+                                             {
+                                    11
+                                                 inner: HashMap<T::Key, T>,
+                                    12
+                                             }
+                                    13
+                                    14
+                                             impl<T> IndexedMap<T>
+                                    15
+                                             where
+                                    16
+                                                 T: Unique + Clone,
+                                    17
+                                             {
+                                    18
+                                                 fn new() -> Self {
+                                    19
+                                                     Self::default()
+                                    20
+                                                 }
+                                    21
+                                    22
+                                                 fn get(&self, key: &T::Key) -> Option<&T> {
+                                    23
+                                                     self.inner.get(key)
+                                    24
+                                                 }
+                                    25
+                                    26
+                                                 fn get_mut(&mut self, key: &T::Key) -> Option<&mut T> {
+                                    27
+                                                     self.inner.get_mut(key)
+                                    28
+                                                 }
+                                    29
+                                    30
+                                                 fn insert(&mut self, value: T) {
+                                    31
+                                                     self.inner.insert(value.get_unique_key(), value);
+                                    32
+                                                 }
+                                    33
+                                    34
+                                                 fn remove(&mut self, key: &T::Key) {
+                                    35
+                                                     self.inner.remove(key);
+                                    36
+                                                 }
+                                    37
+                                    38
+                                                 fn values<'a>(&'a self) -> Values<'a, T::Key, T> {
+                                    39
+                                                     self.inner.values()
+                                    40
+                                                 }
+                                    41
+                                    42
+                                                 fn keys<'a>(&'a self) -> Keys<'a, T::Key, T> {
+                                    43
+                                                     self.inner.keys()
+                                    44
+                                                 }
+                                    45
+                                    46
+                                                 fn take(&mut self, key: &T::Key) -> Option<T> {
+                                    47
+                                                     let value = self.get(key).cloned();
+                                    48
+                                                     self.remove(key);
+                                    49
+                                                     value
+                                    50
+                                                 }
+                                    51
+                                             }
+                                    52
+                                    53
+                                             impl<T> Default for IndexedMap<T>
+                                    54
+                                             where
+                                    55
+                                                 T: Unique,
+                                    56
+                                             {
+                                    57
+                                                 fn default() -> Self {
+                                    58
+                                                     Self {
+                                    59
+                                                         inner: HashMap::new(),
+                                    60
+                                                     }
+                                    61
+                                                 }
+                                    62
+                                             }
+                                With the IndexedMap implemented I moved onto updating the Player,
+                                Connection and Server structs to fit the specification above:
+                                    1
+                                             struct Player {
+                                    2
+                                                 position: Vec3,
+                                    3
+                                                 inventory: Inventory
+                                    4
+                                             }
+                                    5
+                                    6
+                                             struct Connection {
+                                    7
+                                                 last_heartbeat: Instant,
+                                    8
+                                                 addr: SocketAddr,
+                                    9
+                                                 player: Player
+                                    10
+                                             }
+                                    11
+                                    12
+                                             struct Server {
+                                    13
+                                                 socket: UdpSocket,
+                                    14
+                                                 offline: IndexedMap<Player>,
+                                    15
+                                                 online: IndexedMap<Connection>
+                                    16
+                                             }
+                                For IndexedMap to work with players and connections, they need to
+                                implement the Unique trait which I‚Äôve done below:
+                                    1
+                                             impl Unique for Player {
+                                    2
+                                                 type Key = String;
+                                    3
+                                    4
+                                                 fn get_unique_key(&self) -> Self::Key {
+                                    5
+                                                     self.username.clone()
+                                    6
+                                                 }
+                                    7
+                                             }
+                                    8
+                                    9
+                                             impl Unique for Connection {
+                                    10
+                                                 type Key = SocketAddr;
+                                    11
+                                    12
+                                                 fn get_unique_key(&self) -> Self::Key {
+                                    13
+                                                     self.addr
+                                    14
+                                                 }
+                                    15
+                                             }
+                                I also implemented Deref and DerefMut for Connection so the Player
+                                instance within can be easily accessed:
+                                    1
+                                             impl Deref for Connection {
+                                    2
+                                                 type Target = Player;
+                                    3
+                                    4
+                                                 fn deref(&self) -> &Self::Target {
+                                    5
+                                                     &self.player
+                                    6
+                                                 }
+                                    7
+                                             }
+                                    8
+                                    9
+                                             impl DerefMut for Connection {
+                                    10
+                                                 fn deref_mut(&mut self) -> &mut Self::Target {
+                                    11
+                                                     &mut self.player
+                                    12
+                                                 }
+                                    13
+                                             }
+                                Next was to change handle_login to take the player out of the offline
+                                map, wrap it in a Connection and insert it into the online map
+                                    1
+                                             fn handle_login(server: &mut Server, packet: &net::server::Login, addr:
+                                             SocketAddr) {
+                                    2
+                                                 let player = server.offline.take(&packet.username).unwrap_or(Player {
+                                    3
+                                                     position: Vec3::ZERO,
+                                    4
+                                                     username: packet.username.clone(),
+                                    5
+                                                     inventory: Inventory::new()
+                                    6
+                                                 });
+                                    7
+                                    8
+                                                 server.online.insert(Connection { last_heartbeat: Instant::now(), addr,
+                                             player });
+                                    9
+                                    10
+                                                 let connection = server.online.get(&addr).expect("Failed to get connection
+                                             that was just inserted, this is very bad");
+                                    11
+                                    12
+                                                 ...
+                                and then do the opposite when the client disconnects:
+                                    1
+                                             fn disconnect(server: &mut Server, addr: SocketAddr, reason: Option<String>) -
+                                             > Result<()> {
+                                    2
+                                                 let Some(connection) = server.online
+                                    3
+                                                     .get(&addr) else {
+                                    4
+                                                         warn!("Cannot find client for addr {}", addr);
+                                    5
+                                                         return Err(std::io::Error::new(std::io::ErrorKind::NotFound,
+                                             "Client not found").into());
+                                    6
+                                                     };
+                                    7
+                                                 info!("{} is disconnecting", connection.player.username);
+                                    8
+                                    9
+                                                 ... // Peers are notified, if it was a forced disconnection, reason is
+                                             sent to the client
+                                    10
+                                    11
+                                                 server.offline.insert(connection.player.clone());
+                                    12
+                                                 server.online.remove(&connection.get_unique_key());
+                                    13
+                                             }
+                                At this point the server was running and I did some testing, I
+                                logged on, harvested some trees, login out and back in again and my
+                                items didn‚Äôt reappear, but in the server logs my items were found
+                                from my previous session, I wasn‚Äôt setting the client‚Äôs inventory
+                                when they logged in. I repurposed the ModifyInventory packet and
+                                made it common to both the server and client protocols, then on the
+                                server I needed to send a ModifyInventory packet for every item
+                                stack in that player‚Äôs inventory, and on the client I needed to
+                                handle these packets by setting those item stacks to the inventory.
+                                    1
+                                             fn handle_login(server: &mut Server, packet: &net::server::Login, addr:
+                                             SocketAddr) {
+                                    2
+                                                 ... // Login and insert connection
+                                    3
+                                    4
+                                                 for stack in connection.player.inventory.get_items() {
+                                    5
+                                                     let packet =
+                                    6
+                                                         net::client::Packet::ModifyInventory(net::client::ModifyInventory
+                                             { stack: *stack });
+                                    7
+                                    8
+                                                     if let Err(e) = server.send(connection, &packet) {
+                                    9
+                                                         warn!(
+                                    10
+                                                             "Failed to update player {}'s inventory stack {:?} due to {}",
+                                    11
+                                                             connection.player.username, stack, e
+                                    12
+                                                         );
+                                    13
+                                                         continue;
+                                    14
+                                                     }
+                                    15
+                                    16
+                                                     info!(
+                                    17
+                                                         "Updating player {}'s stack {:?}",
+                                    18
+                                                         connection.player.username, stack
+                                    19
+                                                     );
+                                    20
+                                                 }
+                                    21
+                                             }
+                                and the client-side is as simple as calling Inventory::set in the
+                                network handling function:
+                                    1
+                                           ...
+                                    2
+                                    3
+                                           net::client::Packet::ModifyInventory(packet) => {
+                                    4
+                                               info!("Setting {:?} to {}", packet.stack.item, packet.stack.amount);
+                                    5
+                                               inventory.set(packet.stack);
+                                    6
+                                           }
+                                    7
+                                    8
+                                           ...
+                                And with that I did another round of testing, this was a big server
+                                refactor, so I did a full networking test trying to break the server
+                                by making it handle lots of clients at once, and everything passed.
+                                Inventories were persisting through sessions, and were being updated
+                                nearly instantly on login. With this set of features done I did a
+                                round of testing with my friends over the internet, to test latency
+                                and different computers, and also to gather some feedback before
+                                deciding what to implement next.
+                                    1
+                                           let a = 42;
+                                    2
+                                           let b = a + 4;
+                                    3
+                                           let Some(c) = None else { panic!("uh oh") }
+                                                                                                                                                                            2
+                                                                                                                                                               Ì†µÌ±ë         Ì†µÌ±•
+                                                                                                         Ì†µÌ±õ
+                                                                                                                                                                                    )
+                                                                                                                                                                  (
+                                                                                                   (‚àí1)
+                                                                                             ‚àû
+                                                                                                                                                        Ì†µÌ±°
+                                                                                                                                                                       Ì†µÌ±•      2
+                                                                                                                                                               dx
+                                                                                                                                                      Ì†µÌ±í
+                                                                                                                                                                    sin   +cos Ì†µÌ±•
+                                                                                         ‚àë
+                                                                                                    Ì†µÌ±õ+1
+                                                                                             Ì†µÌ±õ=0
+                                                                                                                                               1
+                                                                                                                    (
+                                                                                    ‚à´
+                                                                                                                         lim (1+
+                                                                                                                                                   ) )
+                                                                                                                                                 Ì†µÌ±°
+                                                                                                         ‚àö
+                                                                                                 ‚àö
+                                                                                                                        Ì†µÌ±°‚Üí‚àû
+                                                                                                                                              Ì†µÌ±í
+                                                                                          ‚àû
+                                                                                       ‚àë            Ì†µÌ±õ‚àí Ì†µÌ±õ+1
+                                                                                          Ì†µÌ±õ=0
