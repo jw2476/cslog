@@ -4,7 +4,7 @@
 #set text(fill: rgb(202, 211, 245), font: "JetBrains Mono")
 
 // #set page(height: auto)
-// #set heading(numbering: "1.")
+#set heading(numbering: "1.")
 
 #show raw.where(block: false): code => box[
         #set text(size: 10pt, fill: rgb(250, 179, 135), font: "JetBrains Mono")
@@ -40,7 +40,21 @@
 
 #set table(stroke: rgb(137, 180, 250))
 
-#outline()
+#show outline.entry: it => {
+  if it.at("label", default: none) == <modified-entry> {
+    it // prevent infinite recursion
+  } else {
+    [#outline.entry(
+      it.level,
+      it.element,
+      it.body,
+      [],  // remove fill
+      []  // remove page number
+    ) <modified-entry>]
+  }
+}
+
+#outline(indent: auto)
 
 = Introduction
 MMOs (massively multiplayer online games) are a genre of video games focusing on connecting thousands of players in one central shared world where all players can interact and affect each other's experiences. Games from this genre include World of Warcraft, RuneScape, Final Fantasy XIV, Guild Wars 2 and many more, many of these games however were released around a decade ago and don't take advantage of modern computing. Furthermore, many of these games struggle to stay relevant, especially to younger audiences due to the outdated graphics and systems. My project is a game that hopes to explore what a possible MMORPG taking advantage of modern technologies could look like, focusing on immersion, simulation and player interaction.
@@ -52,7 +66,7 @@ Computers are well suited to MMO servers as they can simulate a world with thous
 
 == Stakeholders
 
-The main stakeholders for my game would be the players as they are the target audience. This group can be split into two main demographics: people who are new to MMOs, and those who are coming from an existing MMO. To deal with this range of experience levels, I will need to make sure there is a good set of tutorials to make sure players new to the genre can understand the game. For gamers more experienced with MMOs, I will need to look at existing games and implement similar feature sets that these players will be expecting, while still adding something new to the game to make it stand out. 
+The main stakeholders for my game would be the players as they are the target audience. This group can be split into two main demographics: people who are new to MMOs, and those who are coming from an existing MMO. To deal with this range of experience levels, I will need to make sure there is a good set of tutorials to make sure players new to the genre can understand the game. For gamers more experienced with MMOs, I will need to look at existing games and implement similar feature sets that these players will be expecting, while still adding something new to the game to make it stand out. I'll also need to be considering both casual and competitive players, and make mechanics and content to keep both happy.
 
 To get a representative sample for each demographic, I will be talking to people from varying experience ranges with the genre. In addition I will be sending out testing samples throughout the development process, asking both groups for feedback.
 
@@ -110,13 +124,21 @@ Because the game needs to be able to run on as many devices as possible, I've tr
 - Up-to-date graphics driver will be needed as I'll be using modern graphics APIs like Vulkan
 - Windows 10 or Linux
 
+= Design
+
+== Gameplay Loops
+The majority of the game can be split into different gameplay loops:
+#image("design/gameplay_loops.png")
+
+=== Gathering
+The gathering system will be responsible for the collection of most resources for crafting and trading, from wood to ores to passive monster drops.
+
+=== Crafting
+
+=== Combat
+
+=== Trading
 
 #include "devlogs/mod.typ"
 
-```pretty-rs
-let a = 42;
-let b = a + 4;
-let Some(c) = None else { panic!("uh oh") }
-```
-
-$ integral^(sum_(n = 0)^infinity ((-1)^n)/(n+1))_(sum_(n = 0)^infinity sqrt(n) - sqrt(n+1)) (lim_(t -> infinity) (1 + 1/e^t)^(e^t))^(d/"dx" ( x^2/(sin^x + cos^2x))) $
+$ integral^(sum_(n = 0)^infinity ((-1)^n)/(n+1))_(sum_(n = 0)^infinity sqrt(n) - sqrt(n+1)) (lim_(t -> infinity) (1 + 1/e^t)^(e^t))^(d/"dx" ( x^2/(sin^2x + cos^2x))) $

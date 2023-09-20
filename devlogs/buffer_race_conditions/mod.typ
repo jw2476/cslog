@@ -13,3 +13,5 @@ The solution was to record frees into a "to free" buffer and flush that buffer w
 
 Here's an example of batching frees:
 #image("batched.png")
+
+TODO: Add code snippets and more detail
