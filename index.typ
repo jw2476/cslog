@@ -1,9 +1,9 @@
 #import "@preview/codelst:0.0.3": sourcecode
 
-#set page(height: auto, fill: rgb(17, 17, 27))
+#set page(fill: rgb(17, 17, 27))
 #set text(fill: rgb(202, 211, 245), font: "JetBrains Mono")
 
-// #set page(height: auto)
+#set page(height: auto)
 #set heading(numbering: "1.")
 
 #show raw.where(block: false): code => box[
