@@ -376,4 +376,33 @@ impl Surface {
 
 With the surface constructed, the next step was to create the logical device and some queues.
 
-=== Devices
+=== Execution Model
+
+Before I get to logical devices, I needed to do some research into Vulkan's execution model so I understood what queues were. All operations in Vulkan have to be recorded into `CommandBuffer` objects, from drawing to rescaling an image. Once these `CommandBuffer` objects are recorded they can be submitted to a `Queue` on the GPU, `Queue`s are a bit like threads but on a GPU, each `Queue` can have a `CommandBuffer` submitted, so multiple `CommandBuffer`s can be executed at once. For this program I am only using one `Queue` so the graphics code will be executed like a single-threaded program, I decided this because of the extra complexity multi-threaded GPU code would create. Each `Queue` belongs to a queue family, which is a collection of `Queue`s with the same capabilities, such as presenting, or running compute shaders. Using the CPU analogy, `Queue`s would be the threads and queue families would be the cores. 
+
+Now I knew what `Queue`s were, I was ready to create a logical device.
+
+=== Devices and Queues
+
+Devices are the most important structure in Vulkan, they represent a handle to a device the program can use to execute command buffers, draw pretty picture and present to the screen. Looking at the `ash` documentation for `DeviceCreateInfo`:
+
+```pretty-rs
+pub struct DeviceCreateInfo {
+    pub s_type: StructureType,
+    pub p_next: *const c_void,
+    pub flags: DeviceCreateFlags,
+    pub queue_create_info_count: u32,
+    pub p_queue_create_infos: *const DeviceQueueCreateInfo,
+    pub enabled_layer_count: u32,
+    pub pp_enabled_layer_names: *const *const c_char,
+    pub enabled_extension_count: u32,
+    pub pp_enabled_extension_names: *const *const c_char,
+    pub p_enabled_features: *const PhysicalDeviceFeatures,
+}
+```
+
+Ignoring `s_type`, `p_next` and `flags`, I needed 4 things for the `DeviceCreateInfo`: an array of `DeviceQueueCreateInfo`, an array of enabled validation layers, an array of enabled device extensions, and finally a refernce to a `PhysicalDeviceFeatures` object.
+
+I'm skipping over extensions and validation layers because the code is very similar to `Instance` creation above.
+
+
