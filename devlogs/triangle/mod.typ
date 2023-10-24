@@ -378,7 +378,7 @@ With the surface constructed, the next step was to create the logical device and
 
 === Execution Model
 
-Before I get to logical devices, I needed to do some research into Vulkan's execution model so I understood what queues were. All operations in Vulkan have to be recorded into `CommandBuffer` objects, from drawing to rescaling an image. Once these `CommandBuffer` objects are recorded they can be submitted to a `Queue` on the GPU, `Queue`s are a bit like threads but on a GPU, each `Queue` can have a `CommandBuffer` submitted, so multiple `CommandBuffer`s can be executed at once. For this program I am only using one `Queue` so the graphics code will be executed like a single-threaded program, I decided this because of the extra complexity multi-threaded GPU code would create. Each `Queue` belongs to a queue family, which is a collection of `Queue`s with the same capabilities, such as presenting, or running compute shaders. Using the CPU analogy, `Queue`s would be the threads and queue families would be the cores. 
+Before I get to logical devices, I needed to do some research into Vulkan's execution model so I understood what queues were. All operations in Vulkan have to be recorded into `CommandBuffer` objects, from drawing to rescaling an image. Once these `CommandBuffer` objects are recorded they can be submitted to a `Queue` on the GPU, queues are a bit like threads but on a GPU, each queue can have a `CommandBuffer` submitted, so multiple `CommandBuffer` object can be executed at once. For this program I am only using one queue for graphics so rendering will be executed like a single-threaded program, I decided this because of the extra complexity multi-threaded GPU code would create. Each queue belongs to a queue family, which is a collection of queues with the same capabilities, such as presenting, or running compute shaders. Using the CPU analogy, queues would be the threads and queue families would be the cores. 
 
 Now I knew what `Queue`s were, I was ready to create a logical device.
 
@@ -405,4 +405,116 @@ Ignoring `s_type`, `p_next` and `flags`, I needed 4 things for the `DeviceCreate
 
 I'm skipping over extensions and validation layers because the code is very similar to `Instance` creation above.
 
+For a basic Vulkan program, I need 2 queues, one with the capabilities to render graphics, and another with the capabilities to present. These can be the same queues, but they aren't always so I need to write the code that works for either situation. To find out whether a queue family supports a certain capability I have to iterate over all families and check if they support the features I need, the code to do this is below:
+
+```pretty-rs
+let (graphics_family_index, graphics_family) = physical
+    .queue_families
+    .iter()
+    .enumerate()
+    .find(|(_, family)| family.queue_flags.intersects(vk::QueueFlags::GRAPHICS))
+    .expect("No graphics queue family");
+
+let (present_family_index, present_family) = physical
+    .queue_families
+    .iter()
+    .enumerate()
+    .find(|(i, _)| {
+	instance
+	    .extensions
+	    .surface
+	    .as_ref()
+	    .unwrap()
+	    .get_physical_device_surface_support(
+		physical.physical,
+		(*i).try_into().unwrap(),
+		surface.surface,
+	    )
+	    .unwrap()
+    })
+    .expect("No present family");
+```
+
+The polling for a presentation queue is much more complex as it requires using a method from the `VK_KHR_surface` extension. I've also kept both the index of the queue family as well as the properties of the queue family, as both will be needed later. The program won't function without a present and graphics queue so I crash out at this point if a suitable queue family can't be found.
+
+Eventually I will have to revisit this section to add other types of queues such as compute queues if I want to use compute pipleines.
+
+Now I've selected the queue families I want to get queues from, I have to fill out the `VkDeviceQueueCreateInfo` structs which are passed into the `VkDeviceCreateInfo` struct to initialise queues. The `VkDeviceQueueCreateInfo` struct comprises of:
+
+```pretty-rs
+pub struct DeviceQueueCreateInfo {
+    pub queue_family_index: u32,
+    pub queue_count: u32,
+    pub p_queue_priorities: *const f32,
+}
+```
+
+The queue family index field is filled with the value from before, and the queue count is hardcoded to 1. Queue priorities is an array of float values between 0.0 to 1.0, and allow you to prioritise certain queues, I'm only using 1 queue so I've hardcoded the value to `[1.0]`.
+
+```pretty-rs
+ let queue_create_infos: Vec<vk::DeviceQueueCreateInfo> = unique_queue_family_indices
+    .iter()
+    .map(|index| {
+	vk::DeviceQueueCreateInfo::builder()
+	    .queue_family_index((*index).try_into().unwrap())
+	    .queue_priorities(&queue_priorities)
+	    .build()
+    })
+    .collect();
+```
+
+I've ommitted some code where I turned the array of queue families into an array of unique family indexes, but this is how I'm dealing with the fact the graphics and presentation queue may be the same or different.
+
+The last part of creating the `VkDevice` handle is the `VkDeviceFeatures` struct, which is a long list of boolean toggles that enable different optional features of the device, for now I'm leaving this blank but I will have to return to enable features as I go forward.
+
+With that done, I finally wrote the code for creating the vulkan device:
+
+```pretty-rs
+let create_info = vk::DeviceCreateInfo::builder()
+    .queue_create_infos(&queue_create_infos)
+    .enabled_layer_names(&wanted_layers_raw)
+    .enabled_extension_names(&wanted_extensions_raw)
+    .enabled_features(&features);
+
+let device = unsafe { instance.create_device(physical.physical, &create_info, None)? };
+```
+
+The queue handles have secretly been made by the API, but they're not returned by the `create_device` method, so I have to get them manually:
+
+```pretty-rs
+let graphics = device.get_device_queue(graphics_family_index.try_into().unwrap(), 0);
+let graphics = Queue::new(graphics, graphics_family_index.try_into().unwrap());
+
+let present = device.get_device_queue(present_family_index.try_into().unwrap(), 0);
+let present = Queue::new(present, present_family_index.try_into().unwrap());
+```
+
+I then wrapped the `VkDevice` handle and the two queues into one `Device` struct that will be passed around the rest of my application:
+
+```pretty-rs
+pub struct Queues {
+    pub graphics: Queue,
+    pub present: Queue,
+}
+
+pub struct Device {
+    device: ash::Device,
+    physical: super::instance::PhysicalDevice,
+    queues: Queues,
+}
+
+impl Device {
+	pub unsafe fn new(instance: &Instance, surface: &Surface) -> Result<Self, vk::Result> {
+		...
+
+		Ok(Self {
+		    device,
+		    physical,
+		    queues: Queues { graphics, present },
+		})
+	}
+}
+```
+
+And with the device created, the next step is to create the swapchain, which is the next step in presenting images to the screen.
 
