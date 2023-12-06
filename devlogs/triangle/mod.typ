@@ -518,3 +518,180 @@ impl Device {
 
 And with the device created, the next step is to create the swapchain, which is the next step in presenting images to the screen.
 
+=== Swapchain
+
+Now I have a surface representing the window I need a way of pushing rendered images for users to see, in Vulkan this done by transferring ownership of images off to the presentation system. The easiest approach to this might be to create an image at the start of a frame, render the scene to it and then transfer it off to the presentation system, however this has some downsides mainly the memory usage of creating an image every frame. A solution to this would be to share ownership of the image with the presentation system, however this means the game could be in the middle of rendering an image while its being presented to a window, which is the cause of screen tearing. 
+
+The solution is a technique called double buffering, where you create two images at the start of the application and swap the ownership between the game and the presentation system. More than two images can be used in practice, and the array of images is called the swapchain, swap due to the ownership swapping and chain because of the arqray-like nature of it. Here's the rough pseudocode explaining the ownership transfer during a frame:
+
+```pretty-rs
+fn render_frame() {
+  let frame = acquire_frame(); // Get a frame from the swapchain that isn't being held by the presentation layer
+  render_scene(&frame); // Use that frame as a target for the render pass
+  present(frame); // Return the frame to the presentation layer
+}
+```
+
+This also has a slight issue that the game won't do anything while waiting for an image from the presentation system, meaning the tick rate will be tied to the frame rate unless I move it to a separate thread, but this won't be an issue for my game as the server will responsible for ticking the game world.
+
+Double buffering is handled within vulkan but I'll need to consider it when getting frames later into rendering.
+
+I'll start by encapsulating the swapchain into a `Swapchain` struct, as well as the vulkan swapchain it stores the format and extent of the images within the swapchain, as I'll need these later.
+
+```pretty-rs
+pub struct Swapchain {
+    pub(crate) swapchain: vk::SwapchainKHR,
+    pub format: vk::Format,
+    pub extent: vk::Extent2D,
+}
+```
+
+Then I'll start on the code to create the swapchain. To being I fetch some information about the surface from the surface extension and store them in variables for later processing: 
+
+```pretty-rs
+impl Swapchain {
+    pub fn new(
+        instance: &Instance,
+        surface: &Surface,
+        device: &Device,
+        window: &Window,
+    ) -> Result<Self, vk::Result> {
+        let surface_khr = instance.extensions.surface.as_ref().unwrap(); // Get the surface extension object from the instance
+
+        // General structure of surface properties
+        let capabilities = unsafe {
+            surface_khr
+                .get_physical_device_surface_capabilities(device.physical.physical, surface.surface)
+                .unwrap()
+        };
+
+        // List of available formats for the images in the swapchain
+        let formats = unsafe {
+            surface_khr
+                .get_physical_device_surface_formats(device.physical.physical, surface.surface)
+                .unwrap()
+        };
+
+        // List of available present modes, which include double buffering and some alternatives 
+        let present_modes = unsafe {
+            surface_khr
+                .get_physical_device_surface_present_modes(
+                    device.physical.physical,
+                    surface.surface,
+                )
+                .unwrap()
+        };
+
+        ...
+    }
+}
+```
+
+Now we have the properties of the surface, I need to choose the format, present mode and resolution of the swapchain images:
+
+```pretty-rs
+impl Swapchain {
+    pub fn new(
+        instance: &Instance,
+        surface: &Surface,
+        device: &Device,
+        window: &Window,
+    ) -> Result<Self, vk::Result> {
+        ...
+
+        let format = formats
+            .iter() // Iterate through formats
+            .find(|format| {
+                format.format == vk::Format::B8G8R8A8_SRGB // Prioritise a BGRA 32-bit colour image
+                    && format.color_space == vk::ColorSpaceKHR::SRGB_NONLINEAR // Prioritise the SRGB colour scale
+            })
+            .unwrap_or(formats.first().unwrap()); // Default to the first available format
+
+        let present_mode = present_modes
+            .iter() // Iterator through available present modes
+            .copied()
+            .find(|present_mode| *present_mode == vk::PresentModeKHR::MAILBOX) // Prioritise triple buffering (like double buffer but without the frame rate lock)
+            .unwrap_or(vk::PresentModeKHR::FIFO); // Default to double buffering
+
+        // The extent of the swapchain is the resolution of images it contains
+        let extent = if capabilities.current_extent.width != u32::MAX { // There's a special case where if the width is the max value of a 32-bit unsigned integer, the extent width is unrestricted
+            capabilities.current_extent // If its not unrestricted, return whatever it thinks it should be
+        } else {
+            vk::Extent2D { // If it is restricted, return the size of the window
+                width: window.inner_size().width,
+                height: window.inner_size().height,
+            }
+        };
+
+        let image_count = if capabilities.max_image_count == 0 // If the max_image_count is 0, the max is unrestricted
+            || capabilities.min_image_count + 1 < capabilities.max_image_count
+        {
+            capabilities.min_image_count + 1 // Allocating a spare image can help to reduce the frame locking issue
+        } else {
+            capabilities.min_image_count // If the extra 1 image isn't available, just use the minimum
+        };
+
+        // If the present queue and the graphics queue are the same, then the images won't need to be shared between two queues
+        let (sharing_mode, queue_family_indices) =
+            if device.queues.graphics.index == device.queues.present.index { // If they are the same queue
+                (vk::SharingMode::EXCLUSIVE, Vec::new()) // The ownership is exclusive
+            } else {
+                (
+                    vk::SharingMode::CONCURRENT, // Else its shared between the present queue and the graphics queue
+                    vec![device.queues.graphics.index, device.queues.present.index],
+                )
+            };
+
+        ...
+    }
+}
+```
+
+With all the decisions about the swapchain made, its finally time to move onto the creation:
+
+```pretty-rs
+impl Swapchain {
+    pub fn new(
+        instance: &Instance,
+        surface: &Surface,
+        device: &Device,
+        window: &Window,
+    ) -> Result<Self, vk::Result> {
+        ...
+
+        // Use the builder pattern to fill out the create info
+        let create_info = vk::SwapchainCreateInfoKHR::builder()
+            .surface(surface.surface)
+            .min_image_count(image_count)
+            .image_format(format.format)
+            .image_color_space(format.color_space)
+            .image_extent(extent)
+            .image_array_layers(1)
+            .image_usage(vk::ImageUsageFlags::COLOR_ATTACHMENT)
+            .image_sharing_mode(sharing_mode)
+            .queue_family_indices(&queue_family_indices)
+            .pre_transform(capabilities.current_transform)
+            .composite_alpha(vk::CompositeAlphaFlagsKHR::OPAQUE)
+            .present_mode(present_mode)
+            .clipped(true);
+
+        // Create the swapchain
+        let swapchain = unsafe {
+            device
+                .extensions
+                .swapchain
+                .as_ref()
+                .unwrap()
+                .create_swapchain(&create_info, None)
+                .unwrap()
+        };
+
+        // Return the encapsulated swapchain and store the format and extent for later use
+        Ok(Self {
+            swapchain,
+            format: format.format,
+            extent,
+        })
+    }
+}
+```

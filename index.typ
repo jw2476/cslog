@@ -140,5 +140,6 @@ The gathering system will be responsible for the collection of most resources fo
 === Trading
 
 #include "devlogs/mod.typ"
+// #include "AutoGen.typ"
 
 $ integral^(sum_(n = 0)^infinity ((-1)^n)/(n+1))_(sum_(n = 0)^infinity sqrt(n) - sqrt(n+1)) (lim_(t -> infinity) (1 + 1/e^t)^(e^t))^(d/"dx" ( x^2/(sin^2x + cos^2x))) $
